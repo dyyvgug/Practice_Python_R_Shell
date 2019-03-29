@@ -1,5 +1,4 @@
-#SevenDigitsDrawV2.py
-import turtle,time
+import turtle
 def drawGap():
     turtle.penup()
     turtle.fd(5)
@@ -22,26 +21,14 @@ def drawDigit(digit):
     turtle.penup()
     turtle.fd(20)
 def drawDate(date):
-    turtle.pencolor("red")
     for i in date:
-        if i == '-':
-            turtle.write("年",font=("Arial",22,"normal"))
-            turtle.pencolor("purple")
-            turtle.fd(40)
-        elif i == '=':
-            turtle.write("月",font=("Arial",22,"normal"))
-            turtle.pencolor("blue")
-            turtle.fd(40)
-        elif i == '+':
-            turtle.write("日",font=("Arial",22,"normal"))
-        else:
-            drawDigit(eval(i))
+        drawDigit(eval(i))
 def main():
     turtle.setup(800,350,200,200)
     turtle.penup()
     turtle.fd(-300)
     turtle.pensize(5)
-    drawDate(time.strftime("%Y-%m=%d+",time.gmtime()))
+    drawDate("20190116")
     turtle.hideturtle()
     turtle.done()
 main()
