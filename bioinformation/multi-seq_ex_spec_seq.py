@@ -19,6 +19,7 @@ for line in fasta_file:
 		seq = ''
 		header = line
 # Take care of the very last record of the input file.
-if "OS=Human" in header:
-	out_file.write(header + seq)
+if "OS=Human" in header:     # What is the role of if? Maybe one day I can understand.
+	out_file.write(header + seq)  
+fasta_file.close()
 out_file.close()
