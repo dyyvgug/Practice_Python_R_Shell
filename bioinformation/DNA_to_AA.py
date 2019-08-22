@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #coding:utf-8
+#2019-8-22.Yingying Done.
 codon_table = {'GCT':'A','GCC':'A','GCA':'A','GCG':'A','CGT':'R','CGC':'R','CGA':'R',\
 	'CGG':'R','ACT':'T','ACC':'T','ACA':'T','ACG':'T','GTT':'V','GTC':'V','GTA':'V',\
 	'GTG':'V','GGT':'G','GGC':'G','GGA':'G','GGG':'G','TCT':'S','TCC':'S','TCA':'S',\
