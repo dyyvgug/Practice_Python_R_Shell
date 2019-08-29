@@ -8,7 +8,7 @@ output_file = open('Am_codonW_sortCAI','w')
 table = []
 header = in_file.readline()
 for line in in_file:
-	col = line.split('\t')
+	col = line.strip().split('\t')
 	col[5] = float(col[5])
 	table.append(col)
 
