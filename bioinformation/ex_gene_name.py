@@ -10,6 +10,6 @@ for line in fa_file:
 # The sequence title is now obtained.
 		header = line
 		print (header)
-		name_file.write(header + '\n')
+		name_file.write(header)
 fa_file.close()
 name_file.close()
