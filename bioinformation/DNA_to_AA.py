@@ -39,7 +39,7 @@ for line in dna_file:
 			aa_file.write(prot[j:j+48] + '\n')	
 			j = j + 48 
 		#aa_file.write(header + prot + '\n')	
-		seq = ''
+		dna = ''
 		header = line
 dna_file.close()
 aa_file.close()
