@@ -10,11 +10,18 @@ codon_table = {'GCT':'A','GCC':'A','GCA':'A','GCG':'A','CGT':'R','CGC':'R','CGA'
 	'AAG':'K','AGT':'S','AGC':'S','AGA':'R','AGG':'R','TTT':'F','TTC':'F','TTA':'L',\
 	'TTG':'L','TGT':'C','TGC':'C','TGG':'W','TAT':'Y','TAC':'Y','TAA':'STOP','TAG':'STOP',\
 	'TGA':'STOP'}
-dna_file = open('Ce_40_ehE_hT_sequence.fa','r')
-aa_file = open('Ce_40_ehE_hT_aa.txt','w')
+
+with open('GFP_Kp.fa', 'r+') as f:
+	f.seek(0, 2)
+	f.write('>')
+f.close()
+
+dna_file = open('GFP_Kp.fa','r')
+aa_file = open('GFP_Kp_aa.txt','w')
+
 dna = ''
 for line in dna_file:
-	if line.startswith('>') and dna == '':    
+	if line.startswith('>') and dna == '':
 # The sequence title is now obtained.
 		header = line
 		print (header)
@@ -35,11 +42,12 @@ for line in dna_file:
 		aa_file.write(header)
 		j = 0
 		while j < len(prot):
-			print prot[j:j+48]
-			aa_file.write(prot[j:j+48] + '\n')	
-			j = j + 48 
-		#aa_file.write(header + prot + '\n')	
+			print (prot[j:j+48])
+			aa_file.write(prot[j:j+48] + '\n')
+			j = j + 48
+		#aa_file.write(header + prot + '\n')
 		dna = ''
 		header = line
+
 dna_file.close()
 aa_file.close()
