@@ -14,19 +14,19 @@ def get_one_page(url):
 
 def parse_one_page(html):
     pattern = re.compile(
-        'class="movie-item-info">.*?<a.*?>(.*?)</a>.*?class="star">(.*?)</p>.*?class="releasetime">(.*?)</p>', re.S)
+        'class="name">.*?<a.*?>(.*?)</a>.*?class="star">(.*?)</p>.*?class="releasetime">(.*?)</p>', re.S)
     items = re.findall(pattern, html)
     for item in items:
         print(item)
         yield {
             'title': item[0],
-            'mes': item[1].strip(),
-            '_time': item[2]
+            'star': item[1].strip(),
+            'time': item[2]
         }
 
 def write_to_file(content):
-    with open('result.txt','a',encoding='utf-8') as f:
-        f.write(json.dumps(content,ensure_ascii=False))
+    with open('flv_result.txt', 'a', encoding='utf-8') as f:
+        f.write(json.dumps(content, ensure_ascii=False, indent=3))
 
 def main():
     url = 'https://maoyan.com/board/4'
