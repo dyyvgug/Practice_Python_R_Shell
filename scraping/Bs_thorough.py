@@ -27,6 +27,9 @@ print(soup.find_all("title"))
 title = str(soup.find_all("title"))
 print(soup.p.get_text())
 print(soup.title.get_text())
+with open('exp.txt', 'a') as f:
+    f.write(soup.title.get_text()+title+'\n')
+    f.write(soup.get_text())
 
 markup = '<a href="http://example.com/">\nI linked to <i>example.com</i>\n</a>'
 soup = BeautifulSoup(markup)
