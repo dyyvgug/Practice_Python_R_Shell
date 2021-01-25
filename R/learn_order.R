@@ -28,4 +28,10 @@ x[order(x,decreasing=TRUE,na.last=TRUE)]
 # ==========================================================
 #  Sorting a dataframe 
 # ==========================================================
-
+population = 10
+gender = sample(c("male","female"),population,replace = TRUE)
+age = sample(25:75,population,replace = TRUE)
+degree = sample(c("MA","ME","BE","BSCS"),population,replace = T)
+df = data.frame(gender=gender,age=age,degree=degree)
+order(df$age)
+df[order(df$age),]
