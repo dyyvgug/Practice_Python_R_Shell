@@ -12,6 +12,11 @@ for item in items:
     if os.path.isfile(item):
         print(item)
 
+print(os.walk('.'))                  # another way
+for root, dirs, files in os.walk('.'):
+    for name in files:
+        print(os.path.join(root, name))
+
 syst = platform.system()            # transform path
         if syst == "Windows":
             os.chdir('.\\')
