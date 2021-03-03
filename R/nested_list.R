@@ -12,4 +12,5 @@ View(Total_Lists)
 # access the first element in each of list
 lapply(Total_Lists,'[[',1)
 # access the third element in each of list
-lapply(Total_Lists,'[[',3)
+el <- lapply(Total_Lists,'[[',3)
+typeof(el)
