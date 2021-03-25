@@ -13,3 +13,6 @@ g!/pattern/d
 
 //可以删除行尾多余的空格和tab符号
 %s/\s\+$//g
+
+3. 统计某些字符的个数
+:%s/apple/apple/ng
