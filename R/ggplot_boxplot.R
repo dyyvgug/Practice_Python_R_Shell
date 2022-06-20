@@ -1,4 +1,4 @@
-##ggplot2 box plot : Quick start guide
+##ggplot2 box plot
 # Convert the variable dose from a numeric to a factor variable
 ToothGrowth$dose <- as.factor(ToothGrowth$dose)
 head(ToothGrowth)
