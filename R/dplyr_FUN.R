@@ -1,7 +1,6 @@
-# learn dplyr package, select(),filter(),mutate(),group_by(),summarize().
+# learn dplyr package, select(),filter(),mutate(),group_by(),summarize(), setdiff()
 library(dplyr) 
 library(ggplot2)
-library(dplyr)
 
 head(mpg)
 df <- select(mpg,model,year,cyl,cty,hwy)
@@ -37,4 +36,12 @@ mpg %>%
 mpg %>%
   group_by(cyl,model) %>%
   summarise(min_value = min(hwy,na.rm = T))
+
+# setdiff
+df1 <- data.frame (name = c("Mike", "Paul", "Paul", "Henry"),
+                   age = c(20, 21, 22, 23))
+df2 <- data.frame (name = c("Sam", "Paul", "Paul", "Bob"),
+                   age = c(26, 30, 22, 23))
+df1_df2 <- setdiff(df1,df2)
+
 
