@@ -22,4 +22,8 @@ print(model.predict(X[:5]))
 print(y[:5])
 # all 5 correct
 
-
+# Score the model
+y_pred = model.predict(X)
+print((y == y_pred).sum())  # check how much prediction results are correct
+print((y == y_pred).sum() / y.shape[0])  #percent
+print(model.score(X,y))
