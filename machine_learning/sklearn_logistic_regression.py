@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
 
 df = pd.read_csv('titanic_noNA.csv')
 df['male'] = df['Sex'] == 'male'
@@ -10,20 +12,27 @@ y = df['Survived'].values
 
 model = LogisticRegression()
 model.fit(X,y)
-print(model.coef_,model.intercept_)
+#print(model.coef_,model.intercept_)
 # [[-1.19324152e+00 -2.50691271e+00 -4.27099569e-02 -3.59677077e-01
 #   -5.24958165e-02  2.38996454e-03]] [5.14869004]
 
-print(model.predict([[3,True,22.0,1,0,7.25]]))
+#print(model.predict([[3,True,22.0,1,0,7.25]]))
 # 0, not survive
-print(model.predict([[1,True,37,0,1,320]]))
+#print(model.predict([[1,True,37,0,1,320]]))
 # 1, survive
-print(model.predict(X[:5]))
-print(y[:5])
+#print(model.predict(X[:5]))
+#print(y[:5])
 # all 5 correct
 
-# Score the model
+# Score the model, accuracy
 y_pred = model.predict(X)
 print((y == y_pred).sum())  # check how much prediction results are correct
 print((y == y_pred).sum() / y.shape[0])  #percent
 print(model.score(X,y))
+
+# accuracy, precision, recall and F1 score
+print("accuracy:", accuracy_score(y,y_pred))
+print("precision:",precision_score(y,y_pred))
+print("recall:",recall_score(y,y_pred))
+print("f1 score:",f1_score(y,y_pred))
+print(confusion_matrix(y,y_pred))
