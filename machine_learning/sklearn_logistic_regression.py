@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv('titanic_noNA.csv')
 df['male'] = df['Sex'] == 'male'
@@ -10,6 +10,9 @@ y = df['Survived'].values
 #print(x)
 #print(y)
 
+# ========================================
+# build logistic regression model
+# ========================================
 model = LogisticRegression()
 model.fit(X,y)
 #print(model.coef_,model.intercept_)
@@ -36,3 +39,38 @@ print("precision:",precision_score(y,y_pred))
 print("recall:",recall_score(y,y_pred))
 print("f1 score:",f1_score(y,y_pred))
 print(confusion_matrix(y,y_pred))
+
+# ====================================================
+#  modify how we build and evaluate the model
+# ====================================================
+# -----------get training set and test set -----------
+x_train, x_test, y_train, y_test = train_test_split(X,y)
+print("whole dataset: ",X.shape,y.shape)
+print("training set: ", x_train.shape,y_train.shape)
+print("test set :", x_test.shape,y_test.shape)
+# -----------change the size of training set-----------
+x_train, x_test, y_train, y_test = train_test_split(X,y,train_size=0.6) # 60% training set
+# -------------training set to build model-------------
+model = LogisticRegression()
+model.fit(x_train,y_train)
+# ----------evaluate the model using the test set -------------
+print(model.score(x_test,y_test))
+y_pred = model.predict(x_test)
+print("accuracy_tt: ",accuracy_score(y_test,y_pred))
+print("precision_tt: ",precision_score(y_test,y_pred))
+print("recall_tt: ",recall_score(y_test,y_pred))
+print("f1 score_tt: ",f1_score(y_test,y_pred))
+# those values are very similar to the values when we used the entire dataset, this is a sign our model isn't overfit
+# ----------set seed, get the same split every time -------------
+#x_train, x_test, y_train, y_test = train_test_split(X,y,random_state=27)
+
+# ============================================================
+# ROC Curve
+# ============================================================
+# ----------sensitivity & specificity ------------------------
+sensitivity_score = recall_score
+print("sensitivity: ",sensitivity_score(y_test,y_pred))
+# specificity is the recall of the negative class
+
+
+
