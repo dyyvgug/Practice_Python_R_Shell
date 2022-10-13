@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
 
 df = pd.read_csv('titanic_noNA.csv')
@@ -44,12 +44,12 @@ print(confusion_matrix(y,y_pred))
 #  modify how we build and evaluate the model
 # ====================================================
 # -----------get training set and test set -----------
-x_train, x_test, y_train, y_test = train_test_split(X,y)
+x_train, x_test, y_train, y_test = train_test_split(X,y) 
 print("whole dataset: ",X.shape,y.shape)
 print("training set: ", x_train.shape,y_train.shape)
 print("test set :", x_test.shape,y_test.shape)
 # -----------change the size of training set-----------
-x_train, x_test, y_train, y_test = train_test_split(X,y,train_size=0.6) # 60% training set
+x_train, x_test, y_train, y_test = train_test_split(X,y,train_size=0.6) # 60% training set, 75% is default
 # -------------training set to build model-------------
 model = LogisticRegression()
 model.fit(x_train,y_train)
@@ -62,7 +62,7 @@ print("recall_tt: ",recall_score(y_test,y_pred))
 print("f1 score_tt: ",f1_score(y_test,y_pred))
 # those values are very similar to the values when we used the entire dataset, this is a sign our model isn't overfit
 # ----------set seed, get the same split every time -------------
-#x_train, x_test, y_train, y_test = train_test_split(X,y,random_state=27)
+#x_train, x_test, y_train, y_test = train_test_split(X,y,random_state=5)
 
 # ============================================================
 # ROC Curve
@@ -71,6 +71,15 @@ print("f1 score_tt: ",f1_score(y_test,y_pred))
 sensitivity_score = recall_score
 print("sensitivity: ",sensitivity_score(y_test,y_pred))
 # specificity is the recall of the negative class
-
-
-
+#print(precision_recall_fscore_support(y,y_pred))
+def specificity_score(y_true,y_pred):
+    p,r,f,s = precision_recall_fscore_support(y_true, y_pred)
+    return r[0]
+print("specificity: ",specificity_score(y_test, y_pred))
+# ----------adjusting the threshold ----------------------------
+#print("predict proba: ",model.predict_proba(x_test))
+y_pred = model.predict_proba(x_test)[:,1] > 0.75
+# this results in fewer positive predictions and more negative predictions
+print("precision_thre75: ",precision_score(y_test, y_pred))
+print("recall_thre75: ",recall_score(y_test, y_pred))
+# setting the threshold to 0.5 that back to original model
