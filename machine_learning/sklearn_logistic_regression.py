@@ -1,7 +1,9 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, precision_recall_fscore_support
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, precision_recall_fscore_support, roc_auc_score, roc_curve
 from sklearn.model_selection import train_test_split
+
 
 df = pd.read_csv('titanic_noNA.csv')
 df['male'] = df['Sex'] == 'male'
@@ -83,3 +85,25 @@ y_pred = model.predict_proba(x_test)[:,1] > 0.75
 print("precision_thre75: ",precision_score(y_test, y_pred))
 print("recall_thre75: ",recall_score(y_test, y_pred))
 # setting the threshold to 0.5 that back to original model
+# ----------build ROC Curve and calculate AUC ----------------------
+model1 = LogisticRegression()
+model1.fit(x_train, y_train)
+y_pred_proba1 = model1.predict_proba(x_test)
+print("model 1 AUC score: ", roc_auc_score(y_test, y_pred_proba1[:,1]))
+
+model2 = LogisticRegression()
+model2.fit(x_train[:,0:2], y_train)
+y_pred_proba2 = model2.predict_proba(x_test[:,0:2])
+print("model 2 AUC score: ",roc_auc_score(y_test, y_pred_proba2[:,1]))
+
+
+fpr1,tpr1,thresholds1 = roc_curve(y_test, y_pred_proba1[:,1])
+fpr2,tpr2,thresholds2 = roc_curve(y_test, y_pred_proba2[:,1])
+plt.plot(fpr1,tpr1,c="blue")
+plt.plot(fpr2,tpr2,c="orange")
+plt.plot([0,1],[0,1],linestyle='--')
+plt.xlim([0.0,1.0])
+plt.ylim([0.0,1.0])
+plt.xlabel('1 - specificity')
+plt.ylabel('sensitivity')
+plt.show()
