@@ -107,3 +107,14 @@ plt.ylim([0.0,1.0])
 plt.xlabel('1 - specificity')
 plt.ylabel('sensitivity')
 plt.show()
+
+# ===========================================================
+#  k-fold cross validation
+# ===========================================================
+# take the dataset with just 6 datapoints and 2 features and 3-fold cross validation
+k_x = df[['Age','Fare']].values[:6]
+k_y = df['Survived'].values[:6]
+
+kf = KFold(n_splits=3,shuffle=True)
+for train,test in kf.split(k_x):
+    print(train,test)
