@@ -1,8 +1,9 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, precision_recall_fscore_support, roc_auc_score, roc_curve
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 
 
 df = pd.read_csv('titanic_noNA.csv')
@@ -46,7 +47,7 @@ print(confusion_matrix(y,y_pred))
 #  modify how we build and evaluate the model
 # ====================================================
 # -----------get training set and test set -----------
-x_train, x_test, y_train, y_test = train_test_split(X,y) 
+x_train, x_test, y_train, y_test = train_test_split(X,y)
 print("whole dataset: ",X.shape,y.shape)
 print("training set: ", x_train.shape,y_train.shape)
 print("test set :", x_test.shape,y_test.shape)
@@ -96,7 +97,6 @@ model2.fit(x_train[:,0:2], y_train)
 y_pred_proba2 = model2.predict_proba(x_test[:,0:2])
 print("model 2 AUC score: ",roc_auc_score(y_test, y_pred_proba2[:,1]))
 
-
 fpr1,tpr1,thresholds1 = roc_curve(y_test, y_pred_proba1[:,1])
 fpr2,tpr2,thresholds2 = roc_curve(y_test, y_pred_proba2[:,1])
 plt.plot(fpr1,tpr1,c="blue")
@@ -111,10 +111,57 @@ plt.show()
 # ===========================================================
 #  k-fold cross validation
 # ===========================================================
-# take the dataset with just 6 datapoints and 2 features and 3-fold cross validation
+'''take the dataset with just 6 datapoints and 2 features and 3-fold cross validation
 k_x = df[['Age','Fare']].values[:6]
 k_y = df['Survived'].values[:6]
 
-kf = KFold(n_splits=3,shuffle=True)
+kf = KFold(n_splits=3, shuffle=True)
 for train,test in kf.split(k_x):
     print(train,test)
+
+splits = list(kf.split(k_x))
+first_split = splits[0]
+train_indices, test_indices = first_split
+print("training set indices:", train_indices)
+print("test set indices:", test_indices)
+x_train = k_x[train_indices]
+x_test = k_x[test_indices]
+y_train = k_y[train_indices]
+y_test = k_y[test_indices]
+print("x_train")
+print(x_train)
+print("y_train", y_train)
+print("x_test")
+print(x_test)
+print("y_test",y_test)'''
+
+# the entire dataset
+kf = KFold(n_splits=5,shuffle=True)
+# get once
+splits = list(kf.split(X))
+train_indices, test_indices = splits[0]
+x_train = X[train_indices]
+x_test = X[test_indices]
+y_train = y[train_indices]
+y_test = y[test_indices]
+
+model = LogisticRegression()
+model.fit(x_train, y_train)
+print("one of the 5 folds scores:", model.score(x_test, y_test))
+
+# loop over all the folds
+scores = []
+kf = KFold(n_splits=5,shuffle=True)
+for train_index, test_index in kf.split(X):
+    x_train = X[train_indices]
+    x_test = X[test_indices]
+    y_train = y[train_indices]
+    y_test = y[test_indices]
+    model = LogisticRegression()
+    model.fit(x_train,y_train)
+    scores.append(model.score(x_test,y_test))
+print("All 5-fold model scores: ", scores)
+print(np.mean(scores))
+
+final_model = LogisticRegression()
+final_model.fit(X,y)
