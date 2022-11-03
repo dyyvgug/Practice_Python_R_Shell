@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
+import graphviz
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, \
     precision_recall_fscore_support, roc_auc_score, roc_curve
+from IPython.display import Image
 
 df = pd.read_csv('titanic_noNA.csv')
 df['male'] = df['Sex'] == 'male'
@@ -43,3 +45,13 @@ for criterion in ['gini', 'entropy']:
     print("precision:", np.mean(precision))
     print("recall:", np.mean(recall))
 
+# visualizing the tree
+feature_names = ['Pcalss','male','Age']
+x = df[feature_names].values
+y = df['Survived'].values
+
+dt2 = DecisionTreeClassifier()
+dt2.fit(x, y)
+dot_file = export_graphviz(model, feature_names=feature_names)
+graph = graphviz.Source(dot_file)  # dot to img
+graph.render(filename='decision_tree', format='png', cleanup=True)
