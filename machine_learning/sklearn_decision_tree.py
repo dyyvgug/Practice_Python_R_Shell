@@ -46,7 +46,7 @@ for criterion in ['gini', 'entropy']:
     print("recall:", np.mean(recall))
 
 # visualizing the tree
-feature_names = ['Pcalss','male','Age']
+feature_names = ['Pclass', 'male', 'Age', 'Siblings/Spouses', 'Parents/Children', 'Fare']
 x = df[feature_names].values
 y = df['Survived'].values
 
