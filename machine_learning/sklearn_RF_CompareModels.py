@@ -32,3 +32,9 @@ print("decision tree accuracy:", dt.score(x_test,y_test))
 lr = LogisticRegression(solver='liblinear')
 lr.fit(x_train,y_train)
 print("Logistic Regression accuracy:",lr.score(x_test,y_test))
+
+# Tuning a random forest
+# limit the number of features to consider at each split, default is the square root of p
+rf_mf = RandomForestClassifier(max_features=5)
+# change the number of trees, the default is 10
+rf_ne = RandomForestClassifier(n_estimators=15)
