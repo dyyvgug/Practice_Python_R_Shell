@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_breast_cancer
@@ -46,6 +47,7 @@ rf_ne = RandomForestClassifier(n_estimators=15)
 # -------------------------------------------------------------
 # Grid Search, find the optimal choice of parameters
 # -------------------------------------------------------------
+
 para_grid = {
     'n_estimators':[10,25,50,75,100],
 }
@@ -57,6 +59,8 @@ print("best parameters:", gs.best_params_)
 # -------------------------------------------------------------------------
 # Elbow Graph, optimizes performance without adding unnecessary complexity
 # -------------------------------------------------------------------------
+
+time_st = time.time()
 n_estimators = list(range(1,101))
 para_grid2 = {
     'n_estimators':n_estimators,
@@ -69,7 +73,10 @@ plt.xlabel("n_estimators")
 plt.ylabel("accuracy")
 plt.xlim(0,100)
 plt.ylim(0.9,1)
-#plt.show()
+plt.savefig('./elbow_estimators.jpg')
+plt.show()
+time_ed = time.time()
+print("time cost for 100 times diffent estimators and elbow graph:", time_ed-time_st,'s')
 # We want the minimum number of estimators that still yield maximum performance
 # Thus, the optimal number of trees is 10
 #rf = RandomForestClassifier(n_estimators=10)
