@@ -19,9 +19,9 @@ function scandir() {
             cd ..
         else
             #echo ${cur_dir}/${dirlist}
-            #做自己的工作
+            # do you want
             local filename=$dirlist
-            #echo "当前文件是："$filename
+            #echo "current folder："$filename
             #echo ${#2} #.zip 4
             #echo ${filename:(-${#2})}
 
@@ -42,7 +42,7 @@ then
     echo "you input a file but not a directory,pls reinput and try again"
     exit 1
 else
-    echo "the Directory isn't exist which you input,pls input a new one!!"
+    echo "the Directory isn't exist which you input, input a new one"
     exit 1
 fi
 
