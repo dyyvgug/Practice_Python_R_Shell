@@ -19,7 +19,7 @@ function scandir() {
             cd ..
         else
             #echo ${cur_dir}/${dirlist}
-            # do you want
+            # do what you want
             local filename=$dirlist
             #echo "current folder："$filename
             #echo ${#2} #.zip 4
@@ -29,6 +29,8 @@ function scandir() {
         	then
         		echo "delete "$filename
  				rm -f $filename
+                # echo "copy" $filename
+                # copy $filename /home/hello
  			fi
         fi
     done
