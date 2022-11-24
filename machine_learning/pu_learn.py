@@ -16,9 +16,14 @@ print(data.head(5))
 # check the counts of positive and negative
 print(data.iloc[:,-1].value_counts()) # through index get value
 
+# ==============================================================
 # train a baseline classifier
+# ==============================================================
 x_data = data.iloc[:,:-1]
 y_data = data.iloc[:,-1]
 # 20% training set, 75% is default
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=7)
-
+# use boost, randomly generate trees
+model = xgb.XGBClassifier()
+model.fit(x_train,y_train)
+y_pred = model.predict(x_test)
