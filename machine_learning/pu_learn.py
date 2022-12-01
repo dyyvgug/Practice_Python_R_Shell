@@ -51,10 +51,15 @@ evaluate_results(y_test,y_pred)
 mod_data = data.copy()
 # get the index of the positives samples
 pos_ind = np.where(mod_data.iloc[:,-1].values == 1)[0]
+#print(pos_ind)
 np.random.shuffle(pos_ind)
+
 # leave just 25% of the positives marked
-pos_sample_len = int(np.ceil(0.25 * len(pos_ind)))
-print("Using {} as positives and unlabelling the rest".format(pos_sample_len/(len(pos_ind))))
+pos_sample_len = int(np.ceil(0.25 * len(pos_ind)))  # .ceil get int from up
+#print(pos_sample_len)
+#print(len(pos_ind))
+print("Using {} as positives and unlabelling the rest".format(1-pos_sample_len/(len(pos_ind))))
+
 pos_sample = pos_ind[:pos_sample_len]
 # create 'class_test', 1 for positive and -1 for unlabelled
 mod_data['class_test'] = -1
@@ -75,7 +80,6 @@ def fit_pu_estimator(X,y,hold_out_ratio,estimator):
     hold_out_size = int(np.ceil(len(positives) * hold_out_ratio))
     np.random.shuffle(positives)
     # hold_out = the *indices* of the positive elements
-    # that we will later use  to estimate P(s=1|y=1)
     hold_out = positives[:hold_out_size]
     # the actual positive *elements* that we will keep aside
     X_hold_out = X[hold_out]
