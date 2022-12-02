@@ -71,6 +71,7 @@ x_data = mod_data.iloc[:,:-2].values # just the X
 y_labeled = mod_data.iloc[:,-1].values # new class (just the P & U)
 y_positive = mod_data.iloc[:,-2].values # original class
 
+
 def fit_pu_estimator(X,y,hold_out_ratio,estimator):
     # find the indices of the positive/labeled elements
     assert (type(y) == np.ndarray), "Must pass np.ndarray rather than list as y"
@@ -87,7 +88,7 @@ def fit_pu_estimator(X,y,hold_out_ratio,estimator):
     X = np.delete(X, hold_out, 0)
     y = np.delete(y, hold_out)
     # We fit the estimator on the unlabeled samples + (part of the) positive and labeled ones.
-    # In order to estimate P(s=1|X) or  what is the probablity that an element is *labeled*
+    # In order to estimate P(s=1|X) or  what is the probability that an element is *labeled*
     estimator.fit(X, y)
     # We then use the estimator for prediction of the positive held-out set
     # in order to estimate P(s=1|y=1)
@@ -97,3 +98,20 @@ def fit_pu_estimator(X,y,hold_out_ratio,estimator):
     # save the mean probability
     c = np.mean(hold_out_predictions)
     return estimator, c
+
+def predict_pu_prob(X,estimator,prob_s1y1):
+    predicted_s = estimator.predict_proba(X)
+    predicted_s = predicted_s[:,1]
+    return predicted_s / prob_s1y1
+
+# test the functions
+predicted = np.zeros(len(x_data))
+learning_iterations = 24
+for index in range(learning_iterations):
+    pu_estimator, probs1y1 = fit_pu_estimator(x_data,y_labeled,0.2,xgb.XGBClassifier())
+    predicted += predict_pu_prob(x_data,pu_estimator,probs1y1)
+    if (index%4 == 0):
+        print(f'Learning Iteration::{index}/{learning_iterations} => P(s=1|y=1)={round(probs1y1,2)}')
+
+y_pred = [1 if x > 0.5 else 0 for x in (predicted/learning_iterations)]
+evaluate_results(y_positive,y_pred)
