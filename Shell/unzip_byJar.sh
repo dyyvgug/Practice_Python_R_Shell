@@ -1,0 +1,1 @@
+jar -xvf file.zip
