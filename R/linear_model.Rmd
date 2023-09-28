@@ -1,0 +1,297 @@
+---
+title: "Exercises for Linear Model"
+output: 
+  html_document: 
+    toc: true
+    theme: readable
+    # teacher: Dr. Stephan Haug
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(tidy = FALSE, message=FALSE, error = TRUE)
+
+```
+
+
+
+
+
+> __Problem  statement:__
+
+
+Install the `lterdatasample` package, see https://lter.github.io/lterdatasampler.
+
+
+
+---
+
+The `lterdatasample` is not available on CRAN, therefore we can't use `install.packages`. The package is available on GitHub and companion website shows the command on how to install the package.  We need a function from the `remotes` package, which you might need to install
+
+```{r}
+install.packages("remotes")
+
+```
+
+to install `lterdatasample`
+
+```{r}
+# be aware that you should not run installation commands in a markdown file. this is just an exception.
+install.packages(lterdatasample)
+
+```
+
+---
+
+
+
+> __Problem  statement:__
+
+
+Fit the model `hbr_lm1` and add the residuals to the dataset `hbr_maples`. Generate a scatterplot of the residuals against `stem_length`.
+
+
+---
+
+To fit the model, we load the package and then run the following code
+
+```{r}
+library(lterdatasampler)
+library(tidyverse)
+hbr_lm1 <- lm(stem_dry_mass ~ stem_length, data = hbr_maples)
+```
+
+The next step is to add the residuals to `hbr_samples`. 
+
+
+```{r}
+library(modelr)
+hbr_maples <- hbr_maples |> 
+  add_residuals(hbr_lm1)
+
+```
+
+Now we are ready to plot the residuals against the `stem_length`.
+
+```{r scp-res-stem-length}
+library(ggplot2)
+hbr_maples |> 
+  ggplot(aes(x = stem_length, y = resid)) + 
+  geom_point()
+```
+
+---
+
+
+
+> __Problem  statement:__
+
+
+Look at the help page of `hbr_maples` and think about how to improve the model fit.
+
+
+---
+
+Let's take a look at the help page
+
+```{r}
+?hbr_maples
+```
+
+
+From the scatterplot, we detected 
+
+---
+
+
+
+> __Problem  statement:__
+
+
+For the next __two__ problems we focus on the data from 2004. 
+
++ Give the null and alternative hypotheses of the test from the following output
+
+
+```{r}
+library(dplyr)
+hbr_maples |> 
+  filter(year == 2004) |> 
+  var.test(stem_length ~ watershed, data = _)
+```
+
+Report the conclusion of the test.
+
+
+---
+
+
+
+---
+
+
+
+
+> __Problem  statement:__
+
+Fit a simple linear model with the `stem_length` as response and `watershed` as a predictor variable. Be aware that you should use just the data from 2004.    
+Think about the test in the summary regarding the `watershed`'s slope. What is the conclusion of the test? How large is the effect size? Are you familiar with the name of the test?
+
+
+
+---
+
+
+The model can be fitted in the same way as before. We only have to take care about filtering the data for the 2004 observations.
+
+```{r}
+
+hbr_lm2 <-  hbr_maples |> 
+  filter(year == 2004) |> 
+  lm(stem_length ~ watershed, data = _)
+  
+```
+
+Let's take a look at the summary
+
+```{r}
+summary(hbr_lm2)
+hbr_maples |> 
+  filter(year == 2004) |> 
+  t.test(stem_length ~ watershed, var.equal = TRUE, data = _)
+```
+
+
+
+---
+
+
+
+> __Problem  statement:__
+
+Add the residuals of the model `hbr_lm3` to `hbr_maples` and remove the variables `sample` and `transect`. Use the function `GGally::ggpairs` to inspect if further variables could be used to improve the model fit.
+
+
+---
+
+We start by fitting the model and then add/remove the respective variables.
+
+
+```{r}
+hbr_maples <- lterdatasampler::hbr_maples |> 
+  mutate(year = factor(year)) # year should be a factor
+
+hbr_lm3 <- lm(stem_dry_mass ~ stem_length * year , data = hbr_maples)
+(hbr_lm3)
+
+library(modelr)
+
+hbr_maples <- hbr_maples |>
+  add_residuals(hbr_lm3) |>
+  dplyr::select(-sample,-transect)
+# good method to filter dataframe
+head(hbr_maples)
+
+```
+
+
+Now we are ready to apply `ggpairs`.
+
+```{r pairs-maple, cache=TRUE, warning=FALSE}
+library(GGally)
+ggpairs(hbr_maples)
+
+```
+
+
+---
+
+
+
+> __Problem  statement:__
+
+Use `step()` to try to add at least one further predictor variable. Think about the criterion used to decide if a variable is added or not.
+
+# from the plot, we can see residuals (lm3) and corrected_leaf_area/watershed has good correlation
+---
+
+In the previous step, we identified `corrected_leaf_area` and `watershed` as potential predictors. 
+
+From the help of  `step()` we learn, that we have to provide the `scope` (variables to be added) and the `direction` (forward, since we want to add variables). So, let's try the following
+
+```{r, error=TRUE}
+stats::step(hbr_lm3,scope = ~ . + corrected_leaf_area + watershed,direction = "forward")
+# . means all available predictor
+# ~ means formula
+# forward, since we want to add variables
+#Error,This doesn’t seem to work and the error message is maybe not so easy to understand. The problem is, that in the year 2004, the leaf area was not recorded. So, if we add corrected_leaf_area to the model, we would need to drop all observations from 2004, but then the factor year has observations only from one of its two levels.
+```
+
+
+
+Now, let's see if we can add `watershed`.
+
+```{r}
+hbr_lm4 <- step(hbr_lm3,scope = ~ . + watershed,direction = "forward")
+library(ggfortify)
+autoplot(hbr_lm4)
+```
+
+---
+
+
+
+> __Problem  statement:__
+
+Applying `autoplot()` on the model from the previous step shows that there is still an increase in the variability of the residuals. Try to apply a log transformation to account for that increase.
+
+
+---
+
+One damping transformation is the logarithm. So, let's see if modelling `log(stem_dry_mass)` instead of `stem_dry_mass` leads to an improved model fit.
+
+```{r plot-lm5}
+hbr_lm5 <- lm(log(stem_dry_mass) ~ stem_length * year + watershed, data = hbr_maples)
+
+library(ggfortify)
+autoplot(hbr_lm5)
+```
+
+
+---
+
+
+
+> __Problem  statement:__
+
+Visualise the marginal effect sizes as well as the effect size of the interaction with the function `sjPlot::plot_model()`.    
+
+
+---
+
+
+The marginal effect of the continuous variable `stem_length` is just the predicted change in the dry mass over the range of `stem_length`. For the two binary variables `year` and `watershed`, it's the expected change in dry mass if the predictor changes from the reference to the other level. 
+
+To illustrate use of the `patchwork` package (arranging plots), we first save all four plots.
+```{r}
+library(sjPlot)
+p_marg <- plot_model(hbr_lm5, type = "pred", title = "")
+p_int <- plot_model(hbr_lm5, type = "int")
+
+```
+
+Now, we arrange them to show the interaction effect on top of the marginal effect sizes.
+
+```{r hbr-lm-effects}
+library(patchwork)
+p_int / (p_marg[[1]] + p_marg[[2]] + p_marg[[3]]) 
+```
+
+The marginal effect of `year` is much larger than that of `watershed`. The marginal effect of `stem_length` shows the change in dry mass with respect to length conditioned on the other two variables being at the reference level (so 2003 for `year`).
+
+
+
+Now it might be justified to report what we have learned in this analysis:
+```{r}
+report::report(hbr_lm5)
+```
