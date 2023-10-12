@@ -1,0 +1,168 @@
+---
+title: "Exercises for ANOVA"
+output: 
+  html_document: 
+    toc: true
+    theme: readable
+
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(tidy = FALSE, message=FALSE, error = TRUE)
+
+```
+
+
+
+
+---
+
+> __Problem  statement:__
+
+
+Compute an ANOVA for the `CO2` dataset. The effect of `Treatment` and `Type` on the carbon dioxide uptake rates should be examined. Give an interpretation for the result. Would you use a model with or without interaction?
+
+---
+
+
+
+
+Each of the two factor variables has two levels. In the first step we will compute mean values for each of the two levels
+
+```{r}
+library(tidyverse)
+head(CO2)
+
+```
+
+
+
+Next we analyse if there might be an interaction between the two variables.
+
+```{r int-co2}
+CO2 |> 
+ggplot(mapping = aes(x=Treatment,color=Type,group=Type,y=uptake)) +
+stat_summary(fun.y = mean, geom = "point") +
+stat_summary(fun.y = mean, geom = "line")
+
+head(CO2)
+bartlett.test(uptake ~ interaction(Treatment, Type),
+data = CO2)
+# significant p-value, there's interaction between treatment and type
+summary(aov(uptake ~ interaction(Treatment, Type), data = CO2))
+df <- aov(uptake ~ Treatment * Type, data = CO2)
+library(ggfortify)
+autoplot(df)
+
+#method1
+CO2$signal <- ifelse(CO2$conc > mean(CO2$conc),factor("high"),factor("low"))
+
+bartlett.test(uptake ~ interaction(signal, conc),
+data = CO2)
+# there is significant interaction
+
+#method2
+CO2 <- CO2 |>
+  mutate(conc_f = factor(
+    ifelse()
+  ))
+
+
+
+```
+
+
+
+There may be no interaction effect, but we check this by fitting the model with interaction.
+
+```{r}
+bartlett.test(uptake ~ interaction(Treatment, Type),
+data = CO2)
+
+```
+
+The interaction effect is not significant at the 5% level.
+
+```{r}
+uptake_aov <- aov(uptake ~ Treatment * Type, data = CO2)
+summary(uptake_aov)
+```
+
+
+---
+
+> __Problem  statement:__
+
+
+Think about the model assumptions. To check the assumptions, try using `autoplot()` on your ANOVA object.
+
+---
+
+
+
+```{r plot-co2-aov}
+library(ggfortify)
+autoplot(uptake_aov)
+
+```
+
+
+
+
+
+
+
+---
+
+> __Problem  statement:__
+
+
+In the second step, we want to check if the ambient carbon dioxide concentration `conc` affects `uptake` too. Check this with an ANOVA. The variable should be split at the median into two parts and coded as a `factor`, see `?cut`.
+
+
+
+---
+
+```{r}
+#method1
+CO2$signal <- ifelse(CO2$conc > mean(CO2$conc),factor("high"),factor("low"))
+
+bartlett.test(uptake ~ interaction(signal, conc),
+data = CO2)
+
+#method2
+CO2 <- CO2 |> 
+  mutate(conc_f = factor(
+    ifelse(conc <= median(conc),
+           "low", "high"), levels = c("low","high")
+    )
+  )
+
+uptake_aov2 <- aov(uptake ~ Type * conc_f + Treatment * conc_f, 
+                   data = CO2)
+
+summary(uptake_aov2)
+CO2 |> 
+  ggplot(mapping = aes(x = Treatment, color = conc_f, group = conc_f, y = uptake)) +
+  stat_summary(fun = mean, geom = "point") +
+  stat_summary(fun = mean, geom = "line")
+```
+
+
+
+Finally, let's fit the model **without interactions** and check the residuals.
+
+```{r}
+uptake_aov3 <- aov(uptake ~ Type + Treatment + conc_f, 
+                   data = CO2)
+
+summary(uptake_aov3)
+```
+
+
+```{r plot-co2-aov3}
+autoplot(uptake_aov3)
+
+```
+
