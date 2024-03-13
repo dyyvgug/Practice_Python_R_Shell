@@ -1,4 +1,5 @@
 #!/bin/bash
+# bash traverse_del.sh ./ *.sam
 
 function scandir() {
     local cur_dir parent_dir workdir
