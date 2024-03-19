@@ -3,24 +3,42 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("GOSemSim")
 BiocManager::install("org.Hs.eg.db")
+BiocManager::install("ragg")
 library(GOSemSim)
 library(org.Hs.eg.db)
+library(tidyverse)
 #https://yulab-smu.top/biomedical-knowledge-mining-book/GOSemSim.html
 
 hsGO <- godata('org.Hs.eg.db', ont="MF")
 # one gene pairs,ENTREZID
 o = GOSemSim::geneSim("241", "251", semData=hsGO, measure="Wang", combine="BMA")
 print(o)
+
+# ----------------------------------------------------------------------------------
 # a string of genes
+# ----------------------------------------------------------------------------------
 s = mgeneSim(genes=c("835", "5261","241", "994"),
          semData=hsGO, measure="Wang",verbose=FALSE)
 print(s)
 # with gene name
 hsGO2 <- godata('org.Hs.eg.db', keytype = "SYMBOL", ont="MF", computeIC=FALSE) 
 genes <- c("CDC45", "MCM10", "CDC20", "NMU", "MMP1")
-name <- mgeneSim(genes, semData=hsGO2, measure="Wang", combine="BMA", verbose=FALSE)
-print(name)
+s2 <- mgeneSim(genes, semData=hsGO2, measure="Wang", combine="BMA", verbose=FALSE)
+print(s2)
+
+# transform the matrix to a table
+m_t <- read.table(text = s2, header = TRUE) %>%
+  as.data.frame()
+
+m_t %>%
+  pivot_longer(-1, names_to = "col2", values_to = "value") %>%
+  filter(col1 < col2) %>%  # Filter for unique pairs
+  select(col1, col2, value) 
+print(m_t)
+
+# --------------------------------------------------------------------------------
 # cluster
+# --------------------------------------------------------------------------------
 gs1 <- c("835", "5261","241", "994", "514", "533")
 gs2 <- c("578","582", "400", "409", "411")
 c1 <- clusterSim(gs1, gs2, semData=hsGO, measure="Wang", combine="BMA")
