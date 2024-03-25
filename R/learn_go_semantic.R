@@ -3,7 +3,6 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("GOSemSim")
 BiocManager::install("org.Hs.eg.db")
-BiocManager::install("ragg")
 library(GOSemSim)
 library(org.Hs.eg.db)
 library(tidyverse)
@@ -13,6 +12,12 @@ hsGO <- godata('org.Hs.eg.db', ont="MF")
 # one gene pairs,ENTREZID
 o = GOSemSim::geneSim("241", "251", semData=hsGO, measure="Wang", combine="BMA")
 print(o)
+# by gene name
+o2 = GOSemSim::geneSim("CDC45", "MCM10", semData=hsGO2, measure="Wang", combine="BMA")
+v = o2[1]
+print(v)
+n = as.character(v)
+print(n)
 
 # ----------------------------------------------------------------------------------
 # a string of genes
