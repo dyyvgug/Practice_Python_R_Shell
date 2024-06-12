@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script name: example.sh
+# bash interactively.sh hello yes
 
 # Access positional parameters
 param1=$1
