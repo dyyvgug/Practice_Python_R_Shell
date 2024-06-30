@@ -11,4 +11,4 @@
     $ jupyter notebook
 
 # jupyter notebook file to .py file 
-jupyter nbconvert --to python notebook.ipynb 
+    $ jupyter nbconvert --to python notebook.ipynb 
