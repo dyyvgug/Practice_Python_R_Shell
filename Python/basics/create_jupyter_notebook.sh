@@ -9,3 +9,6 @@
     $ python -m  pip install -U jupyter matplotlib numpy pandas scikit-learn
     $ python -m ipykernel install --name=my_env
     $ jupyter notebook
+
+# jupyter notebook file to .py file 
+jupyter nbconvert --to python notebook.ipynb 
